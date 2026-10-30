@@ -1,6 +1,60 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex"><title>Tài liệu ôn tập</title>
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;font:16px system-ui,sans-serif;background:#f5f6fa;color:#1b1f2a}
-@media(prefers-color-scheme:dark){body{background:#0f1117;color:#e6e8ef}}main{max-width:420px;padding:24px;text-align:center}</style></head>
-<body><main><h1>Tài liệu ôn tập</h1><p>Trang đang được chuẩn bị – tài liệu sẽ có sau lần xuất bản đầu tiên.</p></main></body></html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Tài liệu ôn tập</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="crypto.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main id="login" class="login" hidden>
+    <form id="login-form" class="login-card" autocomplete="on">
+      <div class="logo" aria-hidden="true">L</div>
+      <h1 id="login-title">Tài liệu ôn tập</h1>
+      <p class="muted">Tài liệu ôn tập của nhóm – đăng nhập để xem.</p>
+      <label>Tên<input id="user" name="username" autocomplete="username" required></label>
+      <label>Mật khẩu<input id="pass" name="password" type="password" autocomplete="current-password" required></label>
+      <label class="check"><input id="remember" type="checkbox" checked> Ghi nhớ trên thiết bị này</label>
+      <button id="login-btn" type="submit">Đăng nhập</button>
+      <p id="login-error" class="error" role="alert" hidden></p>
+      <p class="fineprint">Nội dung được mã hoá; chỉ giải mã trên máy bạn sau khi đăng nhập.</p>
+    </form>
+  </main>
+
+  <div id="app" class="app" hidden>
+    <header class="topbar">
+      <button id="menu-btn" class="icon-btn only-mobile" aria-label="Danh sách">☰</button>
+      <div class="brand"><span class="logo sm" aria-hidden="true">L</span><span id="site-title"></span></div>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-view="docs" role="tab">Tài liệu</button>
+        <button class="tab" data-view="deadlines" role="tab">Sắp đến hạn <span id="due-count" class="badge" hidden></span></button>
+      </nav>
+      <button id="logout" class="link-btn">Đăng xuất</button>
+    </header>
+
+    <div id="view-docs" class="layout">
+      <aside id="sidebar" class="sidebar">
+        <input id="search" type="search" placeholder="Tìm môn, buổi, chủ đề…" aria-label="Tìm kiếm">
+        <div id="course-list"></div>
+        <p id="built" class="fineprint"></p>
+      </aside>
+      <article id="doc" class="doc">
+        <div class="empty"><p>Chọn một buổi học ở danh sách bên trái.</p></div>
+      </article>
+    </div>
+
+    <section id="view-deadlines" class="deadlines" hidden>
+      <div class="deadlines-head">
+        <h2>Nhắc hẹn &amp; deadline</h2>
+        <button id="ics-all" class="btn">📅 Thêm tất cả vào lịch</button>
+      </div>
+      <div id="deadline-list"></div>
+    </section>
+  </div>
+</body>
+</html>
