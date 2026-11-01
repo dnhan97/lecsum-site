@@ -5,7 +5,7 @@
   const $ = (id) => document.getElementById(id);
   const STORE_KEY = "lecsum.key";
   const KIND = { deadline: "⏰ Hạn nộp", exam: "📝 Kiểm tra/Thi", schedule: "📅 Lịch học", attendance: "✅ Điểm danh", material: "📚 Tài liệu", other: "📌 Khác" };
-  let key = null, manifest = null, current = null;
+  let key = null, manifest = null, current = null, currentTab = "summary";
 
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const fmtDate = (iso) => { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}/${m}/${y}`; };
@@ -83,7 +83,8 @@
       for (const s of sessions) {
         const li = document.createElement("li");
         li.innerHTML = `<a href="#doc/${s.id}" data-id="${s.id}"><span class="sess">Buổi ${String(s.n).padStart(2, "0")}</span>` +
-          `<span class="date">${fmtDate(s.date)}</span><span class="title">${esc(s.title || "")}</span></a>`;
+          `<span class="date">${fmtDate(s.date)}${s.study ? ' <span class="star" title="Có bài học chuyên sâu, sơ đồ tư duy, trắc nghiệm">★</span>' : ""}</span>` +
+          `<span class="title">${esc(s.title || "")}</span></a>`;
         ul.appendChild(li);
       }
       g.appendChild(ul);
@@ -97,22 +98,31 @@
     document.querySelectorAll("#course-list a").forEach((a) => a.classList.toggle("active", current && a.dataset.id === current.id));
   }
 
-  async function showDoc(id) {
+  async function showDoc(id, tab) {
     const art = $("doc");
-    art.innerHTML = `<div class="empty"><p>Đang giải mã…</p></div>`;
-    try {
-      current = await openBlob(id);
-    } catch (e) {
-      art.innerHTML = `<div class="empty error"><p>Không mở được tài liệu này (${esc(e.message)}).</p></div>`;
-      return;
+    if (!current || current.id !== id) {
+      art.innerHTML = `<div class="empty"><p>Đang giải mã…</p></div>`;
+      try {
+        current = await openBlob(id);
+      } catch (e) {
+        current = null;
+        art.innerHTML = `<div class="empty error"><p>Không mở được tài liệu này (${esc(e.message)}).</p></div>`;
+        return;
+      }
     }
     art.innerHTML = `<div class="doc-actions">
         <button class="link-btn only-mobile" id="back">← Danh sách</button>
         <span class="spacer"></span>
         <button class="btn" id="dl-md">⬇ Markdown</button>
         <button class="btn" id="print">🖨 In / PDF</button>
-      </div><div class="prose">${current.html}</div>`;
-    $("dl-md").onclick = () => download(`${current.course}_Buoi${String(current.session).padStart(2, "0")}.md`, current.md, "text/markdown");
+      </div><div id="doc-body"></div>`;
+    const body = $("doc-body");
+    if (current.study && window.LecsumStudy) currentTab = window.LecsumStudy.render(body, current, tab || "summary");
+    else { currentTab = "summary"; body.innerHTML = `<div class="prose">${current.html}</div>`; }
+    const base = `${current.course}_Buoi${String(current.session).padStart(2, "0")}`;
+    $("dl-md").onclick = () => currentTab === "summary" || !current.study
+      ? download(`${base}.md`, current.md, "text/markdown")
+      : download(`${base}_chuyen-sau.md`, current.study.md, "text/markdown");
     $("print").onclick = () => window.print();
     $("back").onclick = () => { document.body.classList.add("show-list"); };
     document.body.classList.remove("show-list");
@@ -154,6 +164,7 @@
     return lines.join("\r\n") + "\r\n";
   }
 
+  window.LecsumDownload = (...a) => download(...a);
   function download(name, text, type) {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([text], { type }));
@@ -170,8 +181,8 @@
   }
 
   function route() {
-    const m = location.hash.match(/^#doc\/([0-9a-f]+)$/);
-    if (m) { setView("docs"); showDoc(m[1]); }
+    const m = location.hash.match(/^#doc\/([0-9a-f]+)(?:\/(\w+))?$/);
+    if (m) { setView("docs"); showDoc(m[1], m[2]); }
     else if (location.hash === "#deadlines") setView("deadlines");
   }
 
