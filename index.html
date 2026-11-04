@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; media-src 'self' https://www.googleapis.com; frame-src https://drive.google.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#0e1016">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Tài liệu ôn tập</title>
   <link rel="stylesheet" href="style.css">
   <script src="crypto.js" defer></script>
@@ -42,6 +46,8 @@
       <aside id="sidebar" class="sidebar">
         <input id="search" type="search" placeholder="Tìm môn, buổi, chủ đề…" aria-label="Tìm kiếm">
         <div id="course-list"></div>
+        <div id="search-results"></div>
+        <button id="offline" class="link-btn offline-btn" title="Lưu sẵn mọi tài liệu (đã mã hoá) để đọc khi không có mạng">⬇ Lưu để đọc offline</button>
         <p id="built" class="fineprint"></p>
       </aside>
       <article id="doc" class="doc">
