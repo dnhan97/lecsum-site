@@ -1,6 +1,6 @@
 /* Lecsum – dùng offline. Chỉ lưu bản MÃ HOÁ (data/*.bin) và các tệp tĩnh; khoá giải mã không bao giờ nằm trong cache.
    Tệp tĩnh: lấy cache trước; dữ liệu & manifest: lấy mạng trước, mất mạng thì dùng bản đã lưu. */
-const VERSION = "lecsum-2026-11-06T12:22";
+const VERSION = "lecsum-2026-11-07T10:44";
 const STATIC = ["./", "index.html", "style.css", "crypto.js", "study.js", "app.js", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-180.png"];
 
 self.addEventListener("install", (e) => {
